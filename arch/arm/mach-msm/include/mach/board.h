@@ -270,6 +270,13 @@ enum msm_camera_actuator_name {
 	MSM_ACTUATOR_WEB_CAM_2,
 };
 
+#ifdef CONFIG_MSM_CAMERA_V4L2
+struct msm_camera_platform_info {
+	 struct msm_cam_clk_info *clk_info;
+	 int num_clks;
+};
+#endif
+
 struct msm_actuator_info {
 	struct i2c_board_info const *board_info;
 	enum msm_camera_actuator_name cam_name;

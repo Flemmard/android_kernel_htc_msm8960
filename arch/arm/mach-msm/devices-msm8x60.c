@@ -58,6 +58,8 @@
 #include <mach/mpm.h>
 #include "msm_watchdog.h"
 #include <mach/iommu_domains.h>
+#include <mach/camera.h>
+#include <mach/board.h>
 
 /* Address of GSBI blocks */
 #define MSM_GSBI1_PHYS	0x16000000
@@ -1596,24 +1598,62 @@ struct resource msm_vfe_resources[] = {
 
 static struct resource msm_vpe_resources[] = {
 	{
-		.name   = "vpe",
+		.name   = "msm_vpe",
 		.start	= 0x05300000,
 		.end	= 0x05300000 + SZ_1M - 1,
 		.flags	= IORESOURCE_MEM,
 	},
 	{
-		.name   = "vpe",
+		.name   = "msm_vpe",
 		.start	= INT_VPE,
 		.end	= INT_VPE,
 		.flags	= IORESOURCE_IRQ,
 	},
 };
 
+static struct msm_cam_clk_info csic_clk_info[] = {
+	{"csi_src_clk", 177780000},
+	{"csi_clk", -1},
+	{"csi_pclk", -1},
+};
+
+static struct msm_cam_clk_info vfe_clk_info[] = {
+	{"vfe_clk", 228570000},
+	{"vfe_pclk", -1},
+	{"csi0_vfe_clk", -1},
+	{"csi1_vfe_clk", -1},
+};
+
+static struct msm_cam_clk_info vpe_clk_info[] = {
+	{"vpe_clk", 160000000},
+	{"vpe_pclk", -1},
+};
+
+
+struct msm_camera_platform_info csic_info = {
+	.clk_info = csic_clk_info,
+	.num_clks = ARRAY_SIZE(csic_clk_info),
+};
+
+struct msm_camera_platform_info vfe_info = {
+	.clk_info = vfe_clk_info,
+	.num_clks = ARRAY_SIZE(vfe_clk_info),
+};
+
+struct msm_camera_platform_info vpe_info = {
+	.clk_info = vpe_clk_info,
+	.num_clks = ARRAY_SIZE(vpe_clk_info),
+};
+
+
 struct platform_device msm_device_csic0 = {
 	.name           = "msm_csic",
 	.id             = 0,
 	.resource       = msm_csic0_resources,
 	.num_resources  = ARRAY_SIZE(msm_csic0_resources),
+	.dev	= {
+			.platform_data = &csic_info,
+	},
 };
 
 struct platform_device msm_device_csic1 = {
@@ -1621,6 +1661,9 @@ struct platform_device msm_device_csic1 = {
 	.id             = 1,
 	.resource       = msm_csic1_resources,
 	.num_resources  = ARRAY_SIZE(msm_csic1_resources),
+	.dev	= {
+			.platform_data = &csic_info,
+	},
 };
 
 struct platform_device msm_device_vfe = {
@@ -1628,6 +1671,9 @@ struct platform_device msm_device_vfe = {
 	.id             = 0,
 	.resource       = msm_vfe_resources,
 	.num_resources  = ARRAY_SIZE(msm_vfe_resources),
+	.dev	= {
+			.platform_data = &vfe_info,
+	},
 };
 
 struct platform_device msm_device_vpe = {
@@ -1635,6 +1681,9 @@ struct platform_device msm_device_vpe = {
 	.id             = 0,
 	.resource       = msm_vpe_resources,
 	.num_resources  = ARRAY_SIZE(msm_vpe_resources),
+	.dev	= {
+			.platform_data = &vpe_info,
+	},
 };
 
 #endif
